@@ -20,7 +20,7 @@ app.get('/utente', (req, res) => {
     res.send('Ciao Utente');
 });
 
-app.post('/utente', (req, res) => {
+app.post('/utente', (req, res) => { //ricordati che l'url della fetch deriva da qui
     // console.log(req.body);
     // req.send('Utente creato');
     const {name} = req.body;
