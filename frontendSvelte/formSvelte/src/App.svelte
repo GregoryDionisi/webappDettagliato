@@ -1,41 +1,151 @@
 <script>
-    let name = $state()
-    let responseMessage = $state();
+    let questions = $state([]);
+    let results = $state();
 
-    async function sendName(event) { //visto che deve fare una fetch deve essere asincrona
-        event.preventDefault();
-        //console.log(name);
-        try {
-            const res = await fetch("http://localhost:3000/utente", { //copiamo l'end point da frontend/index.html
-            method: "POST",
-            headers: {
-                "Content-Type" : "application/json"
-            },
-            body: JSON.stringify({name})
-        });
-        if (res.ok){
-            const data = await res.json();
-            console.log(data);
-            responseMessage = data.message;
-            console.log(responseMessage); //ricordati di avviare il server del backend
+    let formState = $state({
+        answers: {},
+        step: 0,
+        error: "",
+    }); //stato utilizzato per verificare se ci sono le risposte e quindi per poter andare avanti
+
+
+    function nextStep(id) {
+        if (formState.answers[id]) {
+            if (formState.step < questions.length - 1) { //per vedere qual è l'ultima domanda
+                formState.step += 1;
+                formState.error = "";
+            } else {
+                formState.step += 1;
+                formState.error = "";
+                //all'ultima domanda invia le risposte
+                sendAnswers();
+            }
         } else {
-            responseMessage = "Errore";
+            formState.error = `Per favore inserire ${id}`;
         }
+    }
+
+    function resetForm() {
+        formState.answers = {};
+        formState.step = 0;
+        formState.error = "";
+    }
+
+    //FETCH INIZIALE DELLE DOMANDE DAL BACKEND
+    fetch("http://localhost:3000/questions")
+        .then(response => response.json())
+        .then(data => {
+            questions = data;
+        })
+        .catch(() => {
+            console.log("Errore");
+        });
+
+async function sendAnswers() {
+        try {
+            const response = await fetch("http://localhost:3000/answers", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    answers: formState.answers
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                formState.error = "";
+                fetchResults();
+            } else {
+                formState.error = data.error || "Errore nell'invio delle risposte";
+            }
     }catch(error) {
         console.log("Errore di rete.");
     }
 }
 
-const res = fetch("http://localhost:3000/questions");
-console.log(res);
-        
+
+async function fetchResults() {
+    try {
+        const response = await fetch("http://localhost:3000/results");
+        if (response.ok) {
+            const data = await response.json();
+            results = data;
+            console.log(results);        
+        }
+    } catch (error) {
+        console.error("Errore nel recupero dei risultati:", error);
+    }
+}
+
+//MODO ALTERNATIVO PER ESTRARRE LE DOMANDE DAL BACKEND USANDO LA FUNZIONE
+/* async function fetchQuestions() {
+        try {
+            const res = await fetch("http://localhost:3000/questions");
+            if (res.ok) {
+                questions = await res.json(); //salva le domande nell'array
+            }
+        } catch (error) {
+            console.error("Errore nel recupero delle domande", error);
+        }
+    } */   
 </script>
 
 
-<h1>Benvenuto {name}</h1>
-<form onsubmit={sendName}>
-    <input type="text" bind:value={name} placeholder="Inserisci il tuo nome">
-    <button type="submit">Invia</button>
-</form>
+<h1>Form Page</h1>
+ 
+<h1>
+    {formState.answers?.name ? formState.answers?.name : "User"}'s Form
+</h1>
+{#if formState.step >= questions.length}
+    <p>Thank you for your answers, {formState.answers.name}!</p>
+    <!-- Riepilogo risposte -->
+      <div>
+        <h2>Riepilogo delle tue risposte</h2>
+        {#if results} <!--bisogna prima verificare che la richiesta a /result sia completata e che quindi dia result in output-->
+        <div>
+            <p><strong>{questions[0].question}:</strong> {results.name}</p>
+            <p><strong>{questions[1].question}:</strong> {results.birthday}</p>
+            <p><strong>{questions[2].question}:</strong> {results.color}</p>
+        </div>
+            {:else}
+                <p>Nessun risultato trovato.</p>
+            {/if}
+        <div>
+            <button
+                onclick={resetForm}>
+                Torna al primo passo
+            </button>
+        </div>
+    </div>
+{:else}
+    <p>Step: {formState.step + 1}</p> <!--Per un utente sarebbe meglio vedere 1 invece di 0-->
+ {/if}
+ 
+{#each questions as {id, question,type}, index}
+    {#if formState.step === index} <!--Prende come parametri id, question e type destrutturati--> 
+        {@render formStep({id, question, type})}
+    {/if}
+{/each}
 
-<h2>{responseMessage}</h2>
+<!-- {JSON.stringify(formState)} --> <!--utilizzato per il debug-->
+
+
+{#if formState.error}
+    <p>{formState.error}</p>
+{/if}
+ 
+{#snippet formStep ({id,question,type})} <!--Prende come parametri id, question e type destrutturati-->
+<div>
+    <label for = {id}>{question} </label>
+    <input {type} bind:value = {formState.answers[id]} /> <!--per collegare l'input a una variabile usiamo bind-->
+</div>
+<button onclick={() => nextStep(id)}>Next</button> <!--IMPORTANTISSIMO: quando richiamo una funzione con un parametro uso l'arrow function -->
+{/snippet}
+
+
+
+
+
