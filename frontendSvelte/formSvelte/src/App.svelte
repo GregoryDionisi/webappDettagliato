@@ -2,7 +2,7 @@
     let name = $state()
     let responseMessage = $state();
 
-    async function sendName(event) { //visto che deve fare una fecth deve essere asincrona
+    async function sendName(event) { //visto che deve fare una fetch deve essere asincrona
         event.preventDefault();
         //console.log(name);
         try {
@@ -25,6 +25,10 @@
         console.log("Errore di rete.");
     }
 }
+
+const res = fetch("http://localhost:3000/questions");
+console.log(res);
+        
 </script>
 
 
@@ -33,3 +37,5 @@
     <input type="text" bind:value={name} placeholder="Inserisci il tuo nome">
     <button type="submit">Invia</button>
 </form>
+
+<h2>{responseMessage}</h2>

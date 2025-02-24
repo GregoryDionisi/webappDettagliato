@@ -1,6 +1,23 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const QUESTION = [
+    {
+        id: "name",
+        question: "What is your name?",
+        type:"text"
+    },
+    {
+        id: "birthday",
+        question: "What is your birthday?",
+        type:"date"
+    },
+    {
+        id: "color",
+        question: "What is your favourite color?",
+        type: "color"
+    }
+]
 
 // Create an express app
 const app = express();
@@ -35,6 +52,14 @@ app.post('/utente', (req, res) => { //ricordati che l'url della fetch deriva da 
     res.json({
         message: `Ciao ${name} sei nel backend`
     });
+});
+
+
+app.post('/questions', (req, res) => { //ricordati che l'url della fetch deriva da qui
+    // console.log(req.body);
+    // req.send('Utente creato');
+    QUESTION = req.body;
+    res.json(QUESTION);
 });
 
 // Faccio partire il server sulla porta 3000
