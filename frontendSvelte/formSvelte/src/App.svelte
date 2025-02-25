@@ -150,14 +150,7 @@ async function fetchResults() {
 {#snippet formStep ({id, question, type, options})}
 <div>
     <label for={id}>{question}</label>
-    {#if type === "textarea"}
-        <textarea 
-            id={id} 
-            bind:value={formState.answers[id]} 
-            rows="4"
-            placeholder="Inserisci qui la tua risposta...">
-        </textarea>
-    {:else if type === "select"}
+    {#if type === "select"}
         <select 
             id={id} 
             bind:value={formState.answers[id]}>
