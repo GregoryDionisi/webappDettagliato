@@ -150,16 +150,7 @@ async function fetchResults() {
 {#snippet formStep ({id, question, type, options})}
 <div>
     <label for={id}>{question}</label>
-    {#if type === "select"}
-        <select 
-            id={id} 
-            bind:value={formState.answers[id]}>
-            <option value="">-- Seleziona {id} esistente --</option>
-            {#each options as option}
-                <option value={option}>{option}</option>
-            {/each}
-        </select>
-    {:else if type === "radio"}
+    {#if type === "radio"}
         <div>
             {#each options as option}
                 <label>
