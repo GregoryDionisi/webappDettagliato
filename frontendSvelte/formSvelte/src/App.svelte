@@ -1,3 +1,4 @@
+<!--Utilizziamo svelte e non svelte-kit perchè quest'ultimo è fullstack e quindi comprende anche il backend-->
 <script>
     let questions = $state([]);
     let results = $state();
