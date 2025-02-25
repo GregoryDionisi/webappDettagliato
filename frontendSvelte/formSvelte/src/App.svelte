@@ -108,8 +108,10 @@ async function fetchResults() {
         {#if results} <!--bisogna prima verificare che la richiesta a /result sia completata e che quindi dia result in output-->
         <div>
             <p><strong>{questions[0].question}:</strong> {results.name}</p>
-            <p><strong>{questions[1].question}:</strong> {results.birthday}</p>
-            <p><strong>{questions[2].question}:</strong> {results.color}</p>
+            <p><strong>{questions[1].question}:</strong> {results.surname}</p>
+            <p><strong>{questions[2].question}:</strong> {results.birthday}</p>
+            <p><strong>{questions[3].question}:</strong> {results.sex}</p>
+            <p><strong>{questions[4].question}:</strong> {results.skills}</p>
         </div>
             {:else}
                 <p>Nessun risultato trovato.</p>
@@ -125,26 +127,83 @@ async function fetchResults() {
     <p>Step: {formState.step + 1}</p> <!--Per un utente sarebbe meglio vedere 1 invece di 0-->
  {/if}
  
-{#each questions as {id, question,type}, index}
-    {#if formState.step === index} <!--Prende come parametri id, question e type destrutturati--> 
-        {@render formStep({id, question, type})}
-    {/if}
+ {#each questions as {id, question, type, options}, index}
+ {#if formState.step === index} <!-- Per ogni domanda, verifica se formState.step corrisponde all'indice corrente. -->
+     <div>
+         {@render formStep({id, question, type, options})}
+         {#if formState.error}
+             <p>{formState.error}</p>
+         {/if}
+         <div>
+             <button 
+                 onclick={() => nextStep(id)}>
+                 Next
+             </button>
+         </div>
+     </div>
+ {/if}
 {/each}
 
 <!-- {JSON.stringify(formState)} --> <!--utilizzato per il debug-->
 
-
-{#if formState.error}
-    <p>{formState.error}</p>
-{/if}
  
-{#snippet formStep ({id,question,type})} <!--Prende come parametri id, question e type destrutturati-->
+{#snippet formStep ({id, question, type, options})}
 <div>
-    <label for = {id}>{question} </label>
-    <input {type} bind:value = {formState.answers[id]} /> <!--per collegare l'input a una variabile usiamo bind-->
+    <label for={id}>{question}</label>
+    {#if type === "textarea"}
+        <textarea 
+            id={id} 
+            bind:value={formState.answers[id]} 
+            rows="4"
+            placeholder="Inserisci qui la tua risposta...">
+        </textarea>
+    {:else if type === "select"}
+        <select 
+            id={id} 
+            bind:value={formState.answers[id]}>
+            <option value="">-- Seleziona {id} esistente --</option>
+            {#each options as option}
+                <option value={option}>{option}</option>
+            {/each}
+        </select>
+    {:else if type === "radio"}
+        <div>
+            {#each options as option}
+                <label>
+                    <input
+                        type="radio"
+                        name={id}
+                        value={option}
+                        bind:group={formState.answers[id]}
+                    />
+                    <span>{option}</span> <!--tutti i radio buttons hanno lo stesso nome in modo che quando viene selezionato uno gli altri vengono deselezionati (comportamento di default dei radio buttons)-->
+                </label> <!--bind:group utilizzato quando vuoi associare più input dello stesso gruppo a una singola variabile  e si usa solitamente con radio buttons e checkbox-->
+            {/each}
+        </div>
+    {:else if type === "checkbox"}
+        <div>
+            {#each options as option}
+                <label>
+                    <input
+                        type="checkbox"
+                        name={id}
+                        value={option}
+                        bind:group={formState.answers[id]}
+                    />
+                    <span>{option}</span> <!--tutti i radio buttons hanno lo stesso nome in modo che quando viene selezionato uno gli altri vengono deselezionati (comportamento di default dei radio buttons)-->
+                </label> <!--bind:group utilizzato quando vuoi associare più input dello stesso gruppo a una singola variabile  e si usa solitamente con radio buttons e checkbox-->
+            {/each}
+        </div>
+    {:else}
+        <input 
+            {type} 
+            id={id} 
+            bind:value={formState.answers[id]}
+        />
+    {/if}
 </div>
-<button onclick={() => nextStep(id)}>Next</button> <!--IMPORTANTISSIMO: quando richiamo una funzione con un parametro uso l'arrow function -->
 {/snippet}
+
 
 
 

@@ -8,14 +8,26 @@ const QUESTION = [
         type:"text"
     },
     {
+        id: "surname",
+        question: "What is your surname?",
+        type:"text"
+    },
+    {
         id: "birthday",
         question: "What is your birthday?",
         type:"date"
     },
     {
-        id: "color",
-        question: "What is your favourite color?",
-        type: "color"
+        id: "sex",
+        question: "What is your sex?",
+        type:"radio",
+        options: ["Maschio", "Femmina", "Transformer"]
+    },
+    {
+        id: "skills",
+        question: "What are your skills?",
+        type: "checkbox",
+        options: ["Programming", "Problem solving", "Design"]
     }
 ]           
 //array QUESTION utilizzato per inviare un questionario al frontend
