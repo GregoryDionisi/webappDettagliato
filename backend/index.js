@@ -43,33 +43,6 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true })), // per leggere i dati dal form
 
 
-// Definizione delle varie route. Quando visiti http://localhost:3000/ nel browser, il server risponde con "Hello World!". 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
-
-app.get('/utente', (req, res) => {
-    res.send('Ciao Utente');
-});
-
-app.post('/utente', (req, res) => { //ricordati che l'url della fetch deriva da qui
-    // console.log(req.body);
-    // req.send('Utente creato');
-    const {name} = req.body; //estrai il valore del nome dalla richiesta
-    if (!name) {
-        //res.status(400).send('Nome non inserito');
-        res.status(400).json({
-            message: 'Nome non inserito' //a differenza di prima in cui visualizzavamo il messaggio solo nel backend, in questo modo creiamo un file json da mostrare nel frontend?
-        });
-        return;
-    }
-    //res.send(`Ciao ${name} sei nel backend`);
-    res.json({
-        message: `Ciao ${name} sei nel backend`
-    });
-});
-
-
 app.get('/questions', (req, res) => { //ricordati che l'url della fetch deriva da qui. Usi GET perchè vuoi prendere i dati dal backend e non postarli
     // console.log(req.body);
     // req.send('Utente creato');
