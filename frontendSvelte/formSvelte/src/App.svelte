@@ -22,7 +22,7 @@
                 sendAnswers();
             }
         } else {
-            formState.error = `Per favore inserire ${id}`;
+            formState.error = `Please enter ${id}`;
         }
     }
 
@@ -39,7 +39,7 @@
             questions = data;
         })
         .catch(() => {
-            console.log("Errore");
+            console.log("Error");
         });
 
 async function sendAnswers() {
@@ -60,10 +60,10 @@ async function sendAnswers() {
                 formState.error = "";
                 fetchResults();
             } else {
-                formState.error = data.error || "Errore nell'invio delle risposte";
+                formState.error = data.error || "Error sending responses";
             }
     }catch(error) {
-        console.log("Errore di rete.");
+        console.log("Network error.");
     }
 }
 
@@ -77,7 +77,7 @@ async function fetchResults() {
             console.log(results);        
         }
     } catch (error) {
-        console.error("Errore nel recupero dei risultati:", error);
+        console.error("Error fetching results:", error);
     }
 }
 
@@ -104,7 +104,7 @@ async function fetchResults() {
     <p>Thank you for your answers, {formState.answers.name}!</p>
     <!-- Riepilogo risposte -->
       <div>
-        <h2>Riepilogo delle tue risposte</h2>
+        <h2>Summary of your answers</h2>
         {#if results} <!--bisogna prima verificare che la richiesta a /result sia completata e che quindi dia result in output-->
         <div>
             <p><strong>{questions[0].question}:</strong> {results.name}</p>
@@ -114,12 +114,12 @@ async function fetchResults() {
             <p><strong>{questions[4].question}:</strong> {results.skills}</p>
         </div>
             {:else}
-                <p>Nessun risultato trovato.</p>
+                <p>No results found.</p>
             {/if}
         <div>
             <button
                 onclick={resetForm}>
-                Torna al primo passo
+                Back to the first step
             </button>
         </div>
     </div>
@@ -132,7 +132,7 @@ async function fetchResults() {
      <div>
          {@render formStep({id, question, type, options})}
          {#if formState.error}
-             <p>{formState.error}</p>
+         <p style="color: red;">{formState.error}</p>
          {/if}
          <div>
              <button 

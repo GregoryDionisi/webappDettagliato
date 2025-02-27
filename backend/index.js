@@ -21,7 +21,7 @@ const QUESTION = [
         id: "sex",
         question: "What is your sex?",
         type:"radio",
-        options: ["Maschio", "Femmina", "Transformer"]
+        options: ["Male", "Female", "I prefer not to specify it"]
     },
     {
         id: "skills",
@@ -83,7 +83,7 @@ app.post('/answers', (req, res) => {
 
     if (!userAnswers) {
         res.status(400).json({
-            message: 'Dati non inseriti'
+            message: 'Data not entered'
         });
         return;
     }
@@ -92,14 +92,14 @@ app.post('/answers', (req, res) => {
     answers.push(userAnswers);
     
     res.json({
-        message: 'Risposte salvate con successo'
+        message: 'Answers saved successfully'
     });
 });
 
 //endpoint per ottenere le risposte per il riepilogone finale
 app.get('/results', (req, res) => {
     if (answers.length === 0) {
-        return res.status(404).json({ error: 'Nessun risultato trovato' });
+        return res.status(404).json({ error: 'No results found' });
     }
     const lastAnswer = answers[answers.length - 1]; //prende l'ultima serie di risposte per lui continua ad accumularle
     res.json(lastAnswer);
