@@ -4,6 +4,7 @@
 
     let questions = $state([]);
     let results = $state();
+    let animationKey = 0;
     
     let formState = $state({
         answers: {},
@@ -26,25 +27,27 @@
     const loopAnimations = [false, true, true, true, true, true];  //la prima animazione in loop, la seconda no
 
     function nextStep(id) {
-        console.log("Step change:", formState.step); //debug
-        if (formState.answers[id]) {
-            if (formState.step < questions.length - 1) {
-                loading = true; // Inizia il caricamento
-                setTimeout(() => {
-                    formState.step += 1;
-                    formState.error = "";
-                    animationKey++;
-                    loading = false;
-                }, 1000);
-            } else {
-                formState.step += 1;
-                formState.error = "";
-                sendAnswers();
-            }
-        } else {
-            formState.error = `Please enter ${id}`;
-        }
+    console.log("Step change:", formState.step); //debug
+    if (formState.answers[id]) {
+      if (formState.step < questions.length - 1) {
+        loading = true; // Inizia il caricamento
+        console.log("Loading started", loading); // Debug: verifica lo stato di loading
+        setTimeout(() => {
+          formState.step += 1;
+          formState.error = "";
+          animationKey++;
+          loading = false;
+          console.log("Loading finished", loading); // Debug: verifica lo stato di loading
+        }, 2000); // Aumentato il tempo di attesa a 2 secondi
+      } else {
+        formState.step += 1;
+        formState.error = "";
+        sendAnswers();
+      }
+    } else {
+      formState.error = `Please enter ${id}`;
     }
+  }
 
 
     function resetForm() {
@@ -132,6 +135,7 @@ async function fetchResults() {
             </div>
         {/if}
         <DotLottieSvelte
+            key={animationKey}
             src={lottieAnimations[formState.step]}
             autoplay
             loop={loopAnimations[formState.step]}
@@ -235,6 +239,7 @@ async function fetchResults() {
         justify-content: center;
         align-items: center;
         margin: auto;
+        position: relative;
     }
 
     .container {
@@ -255,6 +260,7 @@ async function fetchResults() {
         display: flex;
         justify-content: center;
         align-items: center;
+        z-index: 10;
     }
 </style>
 
